@@ -46,7 +46,7 @@
 
   <script>
     // WebSockets server URL and port.
-    const WEB_SOCKET_PORT = 8080;
+    const WEB_SOCKET_PORT = 80;
     const IP_ADDRESS = "192.168.4.50";  // Replace with the ESP32's IP address.
 
     // Get the message input field and send button.
@@ -54,7 +54,7 @@
     const sendButton = document.getElementById("send-button");
 
     // Create a new WebSockets client instance.
-    const socket = new WebSocket(`ws://${IP_ADDRESS}:${WEB_SOCKET_PORT}`);
+    const socket = new WebSocket(`wss://${IP_ADDRESS}:${WEB_SOCKET_PORT}`);
 
     // When the send button is clicked, send the message in the input field to the ESP32.
     sendButton.addEventListener("click", () => {
