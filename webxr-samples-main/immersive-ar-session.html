@@ -43,6 +43,37 @@
       let polyfill = new WebXRPolyfill();
     }
 
+
+
+    const WEB_SOCKET_PORT = 8080;
+    const IP_ADDRESS = "192.168.4.50"; // Replace with the ESP32's IP address.
+
+    // Create a new WebSockets client instance.
+    const socket = new WebSocket(`wss://192.168.4.50`);
+
+    // This function is called when a message is received from the ESP32.
+    socket.onmessage = (event) => {
+      console.log(`Received message from ESP32: ${event.data}`);
+    };
+
+    // This function is called when the connection to the ESP32 is established.
+    socket.onopen = () => {
+      console.log(`Connected to ESP32 at 192.168.4.50:8080`);
+
+      // Send a command of 1 to the ESP32.
+      socket.send("1");
+    };
+
+    // This function is called when the connection to the ESP32 is closed.
+    socket.onclose = () => {
+      console.log("Connection to ESP32 closed");
+    };
+
+    // This function is called if there is an error when trying to connect to the ESP32.
+    socket.onerror = (error) => {
+      console.log(`Error connecting to ESP32: ${error.message}`);
+    };
+
     // XR globals.
     let xrButton = null;
     let xrImmersiveRefSpace = null;
@@ -176,34 +207,6 @@
 
     // Start the XR application.
 
-    const WEB_SOCKET_PORT = 8080;
-    const IP_ADDRESS = "192.168.4.50"; // Replace with the ESP32's IP address.
-
-    // Create a new WebSockets client instance.
-    const socket = new WebSocket(`wss://192.168.4.50:8080`);
-
-    // This function is called when a message is received from the ESP32.
-    socket.onmessage = (event) => {
-      console.log(`Received message from ESP32: ${event.data}`);
-    };
-
-    // This function is called when the connection to the ESP32 is established.
-    socket.onopen = () => {
-      console.log(`Connected to ESP32 at 192.168.4.50:8080`);
-
-      // Send a command of 1 to the ESP32.
-      socket.send("1");
-    };
-
-    // This function is called when the connection to the ESP32 is closed.
-    socket.onclose = () => {
-      console.log("Connection to ESP32 closed");
-    };
-
-    // This function is called if there is an error when trying to connect to the ESP32.
-    socket.onerror = (error) => {
-      console.log(`Error connecting to ESP32: ${error.message}`);
-    };
 
     initXR();
 
