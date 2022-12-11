@@ -82,7 +82,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function initXR() {
         xrButton = new WebXRButton({
           onRequestSession: onRequestSession,
-          onEndSession: onEndSession
+          onEndSession: onEndSession,
+          textEnterXRTitle: "START AR",
+          textXRNotFoundTitle: "AR NOT FOUND",
+          textExitXRTitle: "EXIT  AR",
         });
         document.querySelector('header').appendChild(xrButton.domElement);
 
@@ -143,13 +146,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
 
       function onRequestSession() {
-        return navigator.xr.requestSession('immersive-ar', {
-            requiredFeatures: ['local-floor']
-        }).then((session) => {
-          xrButton.setSession(session);
-          session.isImmersive = true;
-          onSessionStarted(session);
-        });
+        return navigator.xr.requestSession('immersive-ar')
+            .then((session) => {
+              xrButton.setSession(session);
+              session.isImmersive = true;
+              onSessionStarted(session);
+            });
       }
 
       function onSessionStarted(session) {
@@ -165,6 +167,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         session.addEventListener('squeezeend', onSqueezeEnd);
         session.addEventListener('squeeze', onSqueeze);
 
+        if (session.isImmersive) {
+          // When in 'immersive-ar' mode don't draw an opaque background because
+          // we want the real world to show through.
+          skybox.visible = false;
+        }
+
         initGL();
 
         // This and all future samples that visualize controllers will use this
@@ -175,7 +183,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let glLayer = new XRWebGLLayer(session, gl);
         session.updateRenderState({ baseLayer: glLayer });
 
-        let refSpaceType = session.isImmersive ? 'local-floor' : 'viewer';
+        let refSpaceType = session.isImmersive ? 'local' : 'viewer';
         session.requestReferenceSpace(refSpaceType).then((refSpace) => {
           if (session.isImmersive) {
             xrImmersiveRefSpace = refSpace;
@@ -294,6 +302,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function onSessionEnded(event) {
         if (event.session.isImmersive) {
           xrButton.setSession(null);
+          // Turn the background back on when we go back to the inlive view.
+          skybox.visible = true;
         }
       }
 
