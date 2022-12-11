@@ -180,7 +180,7 @@
     const IP_ADDRESS = "192.168.4.50"; // Replace with the ESP32's IP address.
 
     // Create a new WebSockets client instance.
-    const socket = new WebSocket(`ws://192.168.4.50:8080`);
+    const socket = new WebSocket(`wss://192.168.4.50:8080`);
 
     // This function is called when a message is received from the ESP32.
     socket.onmessage = (event) => {
