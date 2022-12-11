@@ -23,6 +23,12 @@
         <a class="back" href="./">Back</a>
       </p>
     </details>
+    <div class="message-container">
+      <p>Messages:</p>
+      <ul id="messages"></ul>
+    </div>
+    <input type="text" id="message-input" placeholder="Enter a message to send to the ESP32">
+    <button id="send-button">Send</button>
   </header>
   <script type="module">
     import { WebXRButton } from './js/util/webxr-button.js';
@@ -47,17 +53,28 @@
 
 
     const WEB_SOCKET_PORT = 8080;
-    const IP_ADDRESS = "192.168.4.50"; // Replace with the ESP32's IP address.
+    const IP_ADDRESS = "192.168.4.50";  // Replace with the ESP32's IP address.
+
+    // Get the message input field and send button.
+    const messageInput = document.getElementById("message-input");
+    const sendButton = document.getElementById("send-button");
 
     // Create a new WebSockets client instance.
-    const socket = new WebSocket(`wss://192.168.4.50:8080`);
+    const socket = new WebSocket(`ws://${IP_ADDRESS}:${WEB_SOCKET_PORT}`);
 
+    // When the send button is clicked, send the message in the input field to the ESP32.
+    sendButton.addEventListener("click", () => {
+      socket.send(messageInput.value);
+    });
     // This function is called when a message is received from the ESP32.
     socket.onmessage = (event) => {
-      console.log(`Received message from ESP32: ${event.data}`);
+      const messagesList = document.getElementById("messages");
+      const message = document.createElement("li");
+      message.textContent = event.data;
+      messagesList.appendChild(message);
     };
 
-    // This function is called when the connection to the ESP32 is established.
+    // When the connection to the ESP32 is established, log a message to the console.
     socket.onopen = () => {
       console.log(`Connected to ESP32 at 192.168.4.50:8080`);
 
